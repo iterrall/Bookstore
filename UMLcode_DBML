@@ -1,0 +1,128 @@
+Project Bookstore {
+  database_type: "MySQL"
+}
+
+
+Table Users {
+  UserID int [primary key, increment]
+  FirstName varchar [not null]
+  LastName varchar [not null]
+  Email varchar [unique, not null]
+  PhoneNumber varchar
+  Address text
+  RegistrationDate timestamp [default: "CURRENT_TIMESTAMP"]
+  TotalSpent decimal [default: 0.00, note: "Ensure non-negative total spent"]
+  PermissionType enum('Admin', 'User') [default: "User"]
+}
+
+
+Table UserAccounts {
+  AccountID int [primary key, increment]
+  UserID int [not null, ref: > Users.UserID]
+  Username varchar [unique, not null]
+  Password varchar [not null]
+  AccountStatus enum('Active', 'Suspended') [default: "Active"]
+  LastLogin datetime
+}
+
+
+Table Orders {
+  OrderID int [primary key, increment]
+  UserID int [not null, ref: > Users.UserID]
+  OrderDate datetime [default: "CURRENT_TIMESTAMP"]
+  TotalAmount decimal [not null]
+  Status enum('Pending', 'Shipped', 'Delivered', 'Canceled') [default: "Pending"]
+}
+
+
+Table Books {
+  BookID int [primary key, increment]
+  ISBN varchar [unique, not null]
+  Title varchar [not null]
+  Publisher varchar [not null]
+  PublicationYear year
+  Edition varchar
+  Price decimal [default: 0.00, note: "Ensure non-negative price"]
+  Stock int [default: 0, note: "Ensure non-negative stock"]
+}
+
+
+Table OrderDetails {
+  OrderDetailID int [primary key, increment]
+  OrderID int [not null, ref: > Orders.OrderID]
+  BookID int [not null, ref: > Books.BookID]
+  Quantity int [not null, note: "Ensure positive quantity"]
+  Subtotal decimal [not null, note: "Ensure non-negative subtotal"]
+  Discount decimal [default: 0.00]
+}
+
+
+Table Authors {
+  AuthorID int [primary key, increment]
+  Name varchar [not null]
+}
+
+
+Table BookAuthors {
+  BookID int [not null, ref: > Books.BookID]
+  AuthorID int [not null, ref: > Authors.AuthorID]
+  indexes {
+    (BookID, AuthorID) [unique]
+  }
+}
+
+
+Table Genres {
+  GenreID int [primary key, increment]
+  GenreName varchar [unique, not null]
+}
+
+
+Table BookGenres {
+  BookID int [not null, ref: > Books.BookID]
+  GenreID int [not null, ref: > Genres.GenreID]
+  indexes {
+    (BookID, GenreID) [unique]
+  }
+}
+
+
+Table Vendors {
+  VendorID int [primary key, increment]
+  CompanyName varchar [not null]
+  ContactName varchar
+  ContactEmail varchar
+  ContactPhone varchar
+  Address text
+  SupplyType enum('Books', 'E-Books', 'Logistics') [not null]
+}
+
+
+Table VendorOrders {
+  VendorOrderID int [primary key, increment]
+  VendorID int [not null, ref: > Vendors.VendorID]
+  BookID int [not null, ref: > Books.BookID]
+  OrderDate timestamp [default: "CURRENT_TIMESTAMP"]
+  Quantity int [not null, note: "Ensure positive quantity"]
+  TotalCost decimal [not null, note: "Ensure non-negative total cost"]
+  DeliveryDate date
+  OrderStatus enum('Pending', 'Received', 'Canceled') [default: "Pending"]
+}
+
+
+Table Notifications {
+  NotificationID int [primary key, increment]
+  UserID int [not null, ref: > Users.UserID]
+  Message text [not null]
+  NotificationDate datetime [default: "CURRENT_TIMESTAMP"]
+  NotificationType enum('OrderUpdate', 'Promotions', 'SystemAlert') [default: "SystemAlert"]
+}
+
+
+Table AuditLogs {
+  AuditID int [primary key, increment]
+  UserID int [not null, ref: > Users.UserID]
+  Action varchar [not null]
+  Timestamp datetime [default: "CURRENT_TIMESTAMP"]
+  Details text
+}
