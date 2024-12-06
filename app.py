@@ -6,8 +6,8 @@ app = Flask(__name__)
 # Database configuration
 db_config = {
     'host': 'localhost',
-    'user': 'root',
-    'password': 'root',
+    'user': 'root123', #update as needed
+    'password': '***', #update as needed
     'database': 'Bookstore'
 }
 
