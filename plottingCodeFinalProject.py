@@ -6,8 +6,8 @@ import seaborn as sns
 # Database connection
 def connect_to_db():
     return mysql.connector.connect(
-        host="localhost",  # Replace with your DB host
-        user="root123",  # Replace with your DB username
+        host="localhost", 
+        user="root123", 
         password="*****",  # Replace with your DB password
         database="Bookstore"  # Replace with your DB name
     )
